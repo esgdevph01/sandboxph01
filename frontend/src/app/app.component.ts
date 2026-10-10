@@ -79,7 +79,7 @@ import { AnalyticsDashboardComponent } from './components/analytics-dashboard/an
           <div class="backend-status-pill" [class.online]="backendOnline" [class.offline]="!backendOnline">
             <span class="status-indicator"></span>
             <span class="status-label">
-              {{ backendOnline ? '.NET Framework 4.8 API Connected' : 'Connecting to .NET 4.8 API (Port 5000)...' }}
+              {{ backendOnline ? (backendPlatform ? backendPlatform + ' API Connected' : 'Assessment API Connected') : 'Connecting to Assessment API...' }}
             </span>
           </div>
 
@@ -293,6 +293,7 @@ export class AppComponent implements OnInit {
   activeTab: 'portal' | 'player' | 'author' | 'proctor' | 'analytics' = 'portal';
   assessments: Assessment[] = [];
   backendOnline = false;
+  backendPlatform = '';
 
   activeAssessment: Assessment | null = null;
   activeSession: CandidateSession | null = null;
@@ -300,6 +301,10 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.api.backendOnline$.subscribe(online => {
       this.backendOnline = online;
+    });
+
+    this.api.backendPlatform$.subscribe(platform => {
+      this.backendPlatform = platform;
     });
 
     this.api.getAssessments().subscribe(list => {

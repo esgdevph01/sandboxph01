@@ -1,6 +1,7 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, isDevMode } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, of, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 import {
   Assessment,
   CandidateSession,
@@ -12,14 +13,33 @@ import {
   QuestionItem
 } from '../models/assessment.types';
 
+export interface ApiEndpointOptions {
+  production: string;
+  development: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class AssessmentApiService {
   private http = inject(HttpClient);
-  private readonly baseUrl = 'http://localhost:5000/api';
+
+  /**
+   * Production and development API endpoint options.
+   * Production is configured to point to Render cloud deployment.
+   */
+  public readonly productionOption: string = 'https://sandboxph01.onrender.com';
+  public readonly developmentOption: string = 'http://localhost:5000';
+
+  public readonly options: ApiEndpointOptions = {
+    production: 'https://sandboxph01.onrender.com',
+    development: 'http://localhost:5000'
+  };
+
+  public baseUrl: string = this.resolveBaseUrl();
 
   public backendOnline$ = new BehaviorSubject<boolean>(false);
+  public backendPlatform$ = new BehaviorSubject<string>('');
   public lastSyncTime$ = new BehaviorSubject<Date>(new Date());
   public isSyncing$ = new BehaviorSubject<boolean>(false);
 
@@ -27,10 +47,69 @@ export class AssessmentApiService {
     this.checkHealth();
   }
 
+  private resolveBaseUrl(): string {
+    if (environment?.apiUrl) {
+      return this.formatUrl(environment.apiUrl);
+    }
+    const isBrowser = typeof window !== 'undefined';
+    const isLocal = isBrowser && (
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1' ||
+      window.location.hostname === '[::1]'
+    );
+    const isProd = environment?.production || !isDevMode() || (isBrowser && !isLocal);
+    const target = isProd ? this.productionOption : this.developmentOption;
+    return this.formatUrl(target);
+  }
+
+  public setProductionOption(url: string): void {
+    (this as any).productionOption = url;
+    this.options.production = url;
+    this.baseUrl = this.formatUrl(url);
+    this.checkHealth();
+  }
+
+  public useProductionEndpoint(): void {
+    this.baseUrl = this.formatUrl(this.productionOption);
+    this.checkHealth();
+  }
+
+  public useDevelopmentEndpoint(): void {
+    this.baseUrl = this.formatUrl(this.developmentOption);
+    this.checkHealth();
+  }
+
+  private formatUrl(url: string): string {
+    const trimmed = (url || '').replace(/\/+$/, '');
+    return trimmed.endsWith('/api') ? trimmed : `${trimmed}/api`;
+  }
+
   checkHealth(): void {
-    this.http.get<{ status: string; platform: string }>(`${this.baseUrl}/health`).pipe(
-      tap(() => this.backendOnline$.next(true)),
+    this.http.get<{ status: string; platform: string; service?: string }>(`${this.baseUrl}/health`).pipe(
+      tap(res => {
+        this.backendOnline$.next(true);
+        if (res?.platform) {
+          this.backendPlatform$.next(res.platform);
+        }
+      }),
       catchError(() => {
+        // If dev localhost is unreachable, automatically attempt fallback to Render production option
+        if (this.baseUrl.includes('localhost') && this.productionOption) {
+          const prodUrl = this.formatUrl(this.productionOption);
+          return this.http.get<{ status: string; platform: string; service?: string }>(`${prodUrl}/health`).pipe(
+            tap(res => {
+              this.baseUrl = prodUrl;
+              this.backendOnline$.next(true);
+              if (res?.platform) {
+                this.backendPlatform$.next(res.platform);
+              }
+            }),
+            catchError(() => {
+              this.backendOnline$.next(false);
+              return of(null);
+            })
+          );
+        }
         this.backendOnline$.next(false);
         return of(null);
       })
