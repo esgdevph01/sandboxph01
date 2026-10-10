@@ -1,0 +1,52 @@
+services:
+  - type: web
+    name: janison-assessment-backend
+    runtime: docker
+    plan: standard
+
+    # Repository configuration
+    repo: https://github.com/esgdevph01/sandboxph01
+    branch: main
+
+    # Docker build settings
+    dockerfile: ./Dockerfile
+    dockerContext: .
+
+    # Port configuration
+    # Render.com automatically assigns a PORT via environment variable
+    port: 5000
+
+    # Scaling configuration
+    numInstances: 1
+    staticPublicRepo: false
+
+    # Environment variables for production
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:${PORT}
+
+    # Health check configuration
+    healthCheckPath: /api/health
+    healthCheckProtocol: HTTP
+
+    # Build settings
+    buildCommand: ""  # Docker will handle the build
+    startCommand: null  # Docker ENTRYPOINT will be used
+
+    # Disk and memory configuration
+    memoryGB: 2
+
+    # Capture logs
+    autoScaling:
+      enabled: false
+
+    # Domain and SSL (optional - add your domain)
+    # customDomains:
+    #   - api.yourdomain.com
+    # autoDeploy: true
+
+    # Deployment hooks
+    preDeployCommand: ""
+    postDeployCommand: ""

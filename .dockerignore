@@ -1,0 +1,64 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# IDEs and editors
+.vscode/
+.vs/
+.idea/
+*.swp
+*.swo
+*~
+*.user
+*.userprefs
+*.suo
+*.sln.DotSettings
+*.ReSharper
+
+# Build outputs
+**/bin/
+**/obj/
+**/Debug/
+**/Release/
+*.log
+
+# NuGet
+packages/
+*.nupkg
+.nuget/
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Documentation and readme files (optional - include if needed)
+# README.md
+# CHANGELOG.md
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+azure-pipelines.yml
+Jenkinsfile
+
+# Docker files (don't copy themselves)
+.dockerignore
+Dockerfile
+docker-compose.yml
+docker-compose.override.yml
+
+# Test files (optional - include if you want to exclude from container)
+# **/Tests/
+# **/Test/
+# *.Test.csproj
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Render configuration
+render.yaml
