@@ -9,11 +9,15 @@ namespace JanisonAssessment.Backend
     {
         static void Main(string[] args)
         {
-            Console.Title = "Janison Assessment Platform - .NET Framework 4.8";
+            try
+            {
+                Console.Title = "Janison Assessment Platform";
+            }
+            catch { }
 
             Console.WriteLine("==================================================================");
             Console.WriteLine("   JANISON DIGITAL ASSESSMENT PLATFORM - BACKEND ENGINE");
-            Console.WriteLine("   Tech Stack: .NET Framework 4.8 | C# | High-Throughput REST API");
+            Console.WriteLine("   Tech Stack: C# / .NET | High-Throughput REST API");
             Console.WriteLine("==================================================================");
 
             var assessmentRepo = new AssessmentRepository();
@@ -21,10 +25,24 @@ namespace JanisonAssessment.Backend
             var sessionService = new ExamSessionService(assessmentRepo, gradingEngine);
             var analyticsService = new AnalyticsService(assessmentRepo, sessionService);
 
-            string hostPrefix = "http://localhost:5000/";
+            string hostPrefix;
+            string portEnv = Environment.GetEnvironmentVariable("PORT");
+
             if (args.Length > 0 && !string.IsNullOrWhiteSpace(args[0]))
             {
                 hostPrefix = args[0];
+            }
+            else if (!string.IsNullOrWhiteSpace(portEnv))
+            {
+                hostPrefix = $"http://*:{portEnv}/";
+            }
+            else if (Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true")
+            {
+                hostPrefix = "http://*:5000/";
+            }
+            else
+            {
+                hostPrefix = "http://localhost:5000/";
             }
 
             var server = new JanisonHttpServer(hostPrefix, assessmentRepo, sessionService, analyticsService);

@@ -1,44 +1,29 @@
-# Multi-stage Dockerfile for Janison Assessment Backend (.NET Framework 4.8)
-# Using Windows Server Core for .NET Framework 4.8
+# Multi-stage Dockerfile for Janison Assessment Backend (.NET 8 LTS)
+# Linux-based for Render.com deployment
 
 # Stage 1: Build stage
-FROM mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-ltsc2022 as builder
-
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy solution and project files
-COPY backend/JanisonAssessment.Backend.csproj ./backend/
-COPY backend/ ./backend/
+# Copy project file and restore dependencies
+COPY backend/JanisonAssessment.Backend.csproj backend/
+RUN dotnet restore backend/JanisonAssessment.Backend.csproj
 
-# Restore NuGet dependencies
-RUN cd backend && \
-	nuget restore JanisonAssessment.Backend.csproj
-
-# Build the application
-RUN cd backend && \
-	msbuild JanisonAssessment.Backend.csproj /p:Configuration=Release /p:Platform="Any CPU"
+# Copy remaining source code and publish
+COPY backend/ backend/
+WORKDIR /src/backend
+RUN dotnet publish JanisonAssessment.Backend.csproj -c Release -f net8.0 -o /app/publish /p:UseAppHost=false
 
 # Stage 2: Runtime stage
-FROM mcr.microsoft.com/dotnet/framework/runtime:4.8-windowsservercore-ltsc2022
-
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
 
-# Copy built application from builder stage
-COPY --from=builder /src/backend/bin/Release/ ./
+# Copy published application
+COPY --from=build /app/publish .
 
-# Expose default port (will be overridden by Render.com PORT env var)
+# Default port (Render.com automatically injects $PORT at runtime)
+ENV PORT=5000
 EXPOSE 5000
 
-# Health check configuration
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-	CMD powershell -Command try { \
-		$response = Invoke-WebRequest http://localhost:5000/api/health -UseBasicParsing; \
-		if ($response.StatusCode -eq 200) { exit 0 } else { exit 1 } \
-	} catch { exit 1 }
-
-# Entry point - application accepts host prefix as argument
-# For Render.com: PORT env var will be passed, app should bind to http://0.0.0.0:{PORT}/
-ENTRYPOINT ["JanisonAssessment.Backend.exe", "http://0.0.0.0:5000/"]
-
-# Alternative startup using PORT environment variable
-CMD if defined PORT (set HOST_PREFIX=http://0.0.0.0:%PORT%/) else (set HOST_PREFIX=http://0.0.0.0:5000/)&&JanisonAssessment.Backend.exe %HOST_PREFIX%
+# Entry point
+ENTRYPOINT ["dotnet", "JanisonAssessment.Backend.dll"]

@@ -50,7 +50,7 @@ namespace JanisonAssessment.Backend.HttpServer
                 _listener.Start();
                 _isRunning = true;
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"[Janison Backend] Self-Hosted .NET Framework 4.8 API active on {_prefix}");
+                Console.WriteLine($"[Janison Backend] Self-Hosted API active on {_prefix}");
                 Console.ResetColor();
 
                 Task.Run(ListenLoop);
@@ -123,7 +123,7 @@ namespace JanisonAssessment.Backend.HttpServer
                     {
                         status = "Healthy",
                         service = "Janison Assessment Platform API",
-                        platform = ".NET Framework 4.8",
+                        platform = System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,
                         runtime = Environment.Version.ToString(),
                         timestamp = DateTime.UtcNow
                     });

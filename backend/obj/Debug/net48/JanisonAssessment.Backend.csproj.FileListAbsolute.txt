@@ -7,6 +7,7 @@ C:\Repos\e-Assessment\backend\obj\Debug\net48\JanisonAssessment.Backend.Generate
 C:\Repos\e-Assessment\backend\obj\Debug\net48\JanisonAssessment.Backend.AssemblyInfoInputs.cache
 C:\Repos\e-Assessment\backend\obj\Debug\net48\JanisonAssessment.Backend.AssemblyInfo.cs
 C:\Repos\e-Assessment\backend\obj\Debug\net48\JanisonAssessment.Backend.csproj.CoreCompileInputs.cache
+C:\Repos\e-Assessment\backend\obj\Debug\net48\JanisonAssessment.Backend.sourcelink.json
 C:\Repos\e-Assessment\backend\obj\Debug\net48\JanisonA.7A8A75BD.Up2Date
 C:\Repos\e-Assessment\backend\obj\Debug\net48\JanisonAssessment.Backend.exe
 C:\Repos\e-Assessment\backend\obj\Debug\net48\JanisonAssessment.Backend.pdb
