@@ -1,0 +1,12 @@
+C:\Repos\e-Assessment\backend\bin\Debug\net48\JanisonAssessment.Backend.exe.config
+C:\Repos\e-Assessment\backend\bin\Debug\net48\JanisonAssessment.Backend.exe
+C:\Repos\e-Assessment\backend\bin\Debug\net48\JanisonAssessment.Backend.pdb
+C:\Repos\e-Assessment\backend\bin\Debug\net48\Newtonsoft.Json.dll
+C:\Repos\e-Assessment\backend\obj\Debug\net48\JanisonAssessment.Backend.csproj.AssemblyReference.cache
+C:\Repos\e-Assessment\backend\obj\Debug\net48\JanisonAssessment.Backend.GeneratedMSBuildEditorConfig.editorconfig
+C:\Repos\e-Assessment\backend\obj\Debug\net48\JanisonAssessment.Backend.AssemblyInfoInputs.cache
+C:\Repos\e-Assessment\backend\obj\Debug\net48\JanisonAssessment.Backend.AssemblyInfo.cs
+C:\Repos\e-Assessment\backend\obj\Debug\net48\JanisonAssessment.Backend.csproj.CoreCompileInputs.cache
+C:\Repos\e-Assessment\backend\obj\Debug\net48\JanisonA.7A8A75BD.Up2Date
+C:\Repos\e-Assessment\backend\obj\Debug\net48\JanisonAssessment.Backend.exe
+C:\Repos\e-Assessment\backend\obj\Debug\net48\JanisonAssessment.Backend.pdb
