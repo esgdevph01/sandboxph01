@@ -1,0 +1,5 @@
+C:\Repos\e-Assessment\backend\test_publish\JanisonAssessment.Backend.dll
+C:\Repos\e-Assessment\backend\test_publish\JanisonAssessment.Backend.deps.json
+C:\Repos\e-Assessment\backend\test_publish\JanisonAssessment.Backend.runtimeconfig.json
+C:\Repos\e-Assessment\backend\test_publish\JanisonAssessment.Backend.pdb
+C:\Repos\e-Assessment\backend\test_publish\Newtonsoft.Json.dll
